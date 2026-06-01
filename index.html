@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D'SHINE — Reserva tu cita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A87C;
+    --gold-light: #E8D4B0;
+    --gold-dark: #8B6914;
+    --bg: #07060A;
+    --bg-1: #0E0C12;
+    --bg-2: #161320;
+    --bg-3: #1E1A2C;
+    --text: #F0EBE3;
+    --text-muted: #6B6075;
+    --border: #2A2438;
+    --success: #4CAF88;
+    --error: #E07070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background decoration */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,168,124,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    letter-spacing: 8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* Main container */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 50px 20px 80px;
+  }
+
+  /* Steps indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 50px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    transition: all 0.4s ease;
+    background: var(--bg-1);
+  }
+
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.4s ease;
+  }
+
+  .step.active .step-num {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,124,0.1);
+  }
+
+  .step.active .step-label { color: var(--gold); }
+
+  .step.done .step-num {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--bg);
+  }
+
+  .step.done .step-label { color: var(--gold-light); }
+
+  .step-line {
+    width: 60px;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 22px;
+    transition: background 0.4s ease;
+  }
+
+  .step-line.done { background: var(--gold); }
+
+  /* Panels */
+  .panel {
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .panel.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section title */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+
+  /* Service cards */
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .service-card {
+    border: 1px solid var(--border);
+    background: var(--bg-1);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--gold);
+    transition: height 0.3s ease;
+  }
+
+  .service-card:hover { border-color: rgba(201,168,124,0.3); background: var(--bg-2); }
+  .service-card:hover::before { height: 100%; }
+
+  .service-card.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,124,0.08);
+  }
+
+  .service-card.selected::before { height: 100%; }
+
+  .service-categoria {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .service-nombre {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .service-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .service-duracion {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  .service-precio {
+    font-size: 13px;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+  }
+
+  /* Calendar */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .calendar-month {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+
+  .cal-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    background: var(--bg-1);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 16px;
+  }
+
+  .cal-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 32px;
+  }
+
+  .cal-day-name {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 8px 0;
+    text-transform: uppercase;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    color: var(--text);
+    position: relative;
+  }
+
+  .cal-day:hover:not(.disabled):not(.empty) {
+    border-color: rgba(201,168,124,0.3);
+    background: var(--bg-2);
+  }
+
+  .cal-day.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,124,0.12);
+    color: var(--gold);
+  }
+
+  .cal-day.today { color: var(--gold-light); }
+  .cal-day.today::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    width: 3px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .cal-day.disabled { color: var(--text-muted); opacity: 0.3; cursor: not-allowed; }
+  .cal-day.empty { cursor: default; }
+
+  /* Time slots */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .slot {
+    padding: 14px 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-1);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .slot:hover:not(.unavailable) {
+    border-color: rgba(201,168,124,0.4);
+    background: var(--bg-2);
+  }
+
+  .slot.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,124,0.12);
+    color: var(--gold);
+  }
+
+  .slot.unavailable {
+    opacity: 0.25;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  .slot-end {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 0;
+  }
+
+  /* Loading slots */
+  .slots-loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--text-muted); }
+
+  /* Summary box */
+  .summary-box {
+    border: 1px solid var(--border);
+    background: var(--bg-1);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+
+  .summary-title {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key { color: var(--text-muted); letter-spacing: 1px; }
+  .summary-val { color: var(--text); text-align: right; }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%;
+    padding: 18px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 14px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .btn-row .btn-secondary { flex: 0 0 auto; }
+  .btn-row .btn-primary { flex: 1; }
+
+  /* Success */
+  .success-panel {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 28px;
+  }
+
+  .success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--gold);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+
+  .success-msg {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 400px;
+    margin: 0 auto 32px;
+  }
+
+  /* Error message */
+  .error-msg {
+    background: rgba(224,112,112,0.1);
+    border: 1px solid rgba(224,112,112,0.3);
+    color: var(--error);
+    padding: 14px 18px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* Loading state */
+  .loading { opacity: 0.6; pointer-events: none; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 32px 0;
+  }
+
+  /* Nota */
+  .nota {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 500px) {
+    .services-grid { grid-template-columns: 1fr; }
+    .slots-grid { grid-template-columns: repeat(3, 1fr); }
+    .logo { font-size: 32px; letter-spacing: 5px; }
+    .step-line { width: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">D'SHINE</div>
+  <div class="tagline">Estética & Belleza · Pereira</div>
+</header>
+
+<main>
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step-1">
+      <div class="step-num">01</div>
+      <div class="step-label">Servicio</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step" id="step-2">
+      <div class="step-num">02</div>
+      <div class="step-label">Fecha</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-3">
+      <div class="step-num">03</div>
+      <div class="step-label">Datos</div>
+    </div>
+    <div class="step-line" id="line-3"></div>
+    <div class="step" id="step-4">
+      <div class="step-num">04</div>
+      <div class="step-label">Confirmar</div>
+    </div>
+  </div>
+
+  <!-- Panel 1: Servicio -->
+  <div class="panel active" id="panel-1">
+    <div class="section-title">Elige tu servicio</div>
+    <div class="section-subtitle">Selecciona el tratamiento que deseas agendar</div>
+    <div class="services-grid" id="services-grid">
+      <div class="slots-loading">Cargando servicios...</div>
+    </div>
+    <button class="btn-primary" id="btn-1" disabled onclick="goToStep(2)">Continuar</button>
+  </div>
+
+  <!-- Panel 2: Fecha y hora -->
+  <div class="panel" id="panel-2">
+    <div class="section-title">Elige fecha y hora</div>
+    <div class="section-subtitle">Selecciona el día y el horario de tu preferencia</div>
+
+    <div class="calendar-header">
+      <button class="cal-btn" onclick="prevMonth()">&#8249;</button>
+      <div class="calendar-month" id="cal-month"></div>
+      <button class="cal-btn" onclick="nextMonth()">&#8250;</button>
+    </div>
+
+    <div class="calendar-grid" id="calendar-grid"></div>
+
+    <div id="slots-section" style="display:none">
+      <div class="divider"></div>
+      <div class="section-title" style="font-size:20px; margin-bottom:4px">Horarios disponibles</div>
+      <div class="section-subtitle" id="slots-date-label"></div>
+      <div id="slots-container"><div class="slots-loading">Cargando horarios...</div></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goToStep(1)">Atrás</button>
+      <button class="btn-primary" id="btn-2" disabled onclick="goToStep(3)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- Panel 3: Datos personales -->
+  <div class="panel" id="panel-3">
+    <div class="section-title">Tus datos</div>
+    <div class="section-subtitle">Completa la información para confirmar tu cita</div>
+
+    <div class="form-group">
+      <label class="form-label">Nombre completo</label>
+      <input class="form-input" id="input-nombre" type="text" placeholder="Tu nombre" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Teléfono (WhatsApp)</label>
+      <input class="form-input" id="input-telefono" type="tel" placeholder="+57 300 000 0000" autocomplete="tel">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Correo electrónico</label>
+      <input class="form-input" id="input-email" type="email" placeholder="tu@correo.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notas adicionales (opcional)</label>
+      <input class="form-input" id="input-notas" type="text" placeholder="¿Alguna alergia o preferencia?">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goToStep(2)">Atrás</button>
+      <button class="btn-primary" onclick="goToStep(4)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- Panel 4: Confirmación -->
+  <div class="panel" id="panel-4">
+    <div class="section-title">Confirma tu reserva</div>
+    <div class="section-subtitle">Revisa los detalles antes de confirmar</div>
+
+    <div class="summary-box">
+      <div class="summary-title">Resumen de tu cita</div>
+      <div class="summary-row">
+        <span class="summary-key">Servicio</span>
+        <span class="summary-val" id="sum-servicio"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Fecha</span>
+        <span class="summary-val" id="sum-fecha"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Hora</span>
+        <span class="summary-val" id="sum-hora"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Duración</span>
+        <span class="summary-val" id="sum-duracion"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Valor</span>
+        <span class="summary-val" id="sum-precio"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Cliente</span>
+        <span class="summary-val" id="sum-cliente"></span>
+      </div>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goToStep(3)">Atrás</button>
+      <button class="btn-primary" id="btn-confirmar" onclick="confirmarReserva()">Confirmar reserva</button>
+    </div>
+
+    <p class="nota">Al confirmar recibirás un mensaje de WhatsApp con los detalles de tu cita.<br>Cancela con mínimo 2 horas de anticipación.</p>
+  </div>
+
+  <!-- Panel 5: Éxito -->
+  <div class="panel" id="panel-5">
+    <div class="success-panel">
+      <div class="success-icon">✦</div>
+      <div class="success-title">¡Reserva confirmada!</div>
+      <div class="success-msg" id="success-msg">
+        Tu cita ha sido agendada exitosamente. Recibirás una confirmación por WhatsApp con todos los detalles.
+      </div>
+      <div class="summary-box" id="success-summary"></div>
+      <button class="btn-primary" onclick="nuevaReserva()" style="max-width:300px; margin:0 auto; display:block">Nueva reserva</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const API = 'https://web-production-8dc33.up.railway.app/api';
+
+let state = {
+  step: 1,
+  servicio: null,
+  fecha: null,
+  hora: null,
+  horaFin: null,
+  nombre: '',
+  telefono: '',
+  email: '',
+  notas: '',
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth()
+};
+
+// ── Load services ────────────────────────────────────────────────
+async function loadServices() {
+  try {
+    const res = await fetch(`${API}/servicios`);
+    const data = await res.json();
+    renderServices(data.servicios || []);
+  } catch (e) {
+    document.getElementById('services-grid').innerHTML = '<p style="color:var(--error);font-size:13px">Error cargando servicios. Intenta de nuevo.</p>';
+  }
+}
+
+function renderServices(servicios) {
+  const grid = document.getElementById('services-grid');
+  if (!servicios.length) {
+    grid.innerHTML = '<p style="color:var(--text-muted);font-size:13px">No hay servicios disponibles.</p>';
+    return;
+  }
+
+  const cats = { facial: 'Facial', laser: 'Láser', maquillaje: 'Maquillaje', corporal: 'Corporal' };
+
+  grid.innerHTML = servicios.map(s => `
+    <div class="service-card" onclick="selectService('${s._id}', '${s.nombre.replace(/'/g,"\\'")}', ${s.duracionMin}, ${s.precio})" id="sc-${s._id}">
+      <div class="service-categoria">${cats[s.categoria] || s.categoria}</div>
+      <div class="service-nombre">${s.nombre}</div>
+      <div class="service-meta">
+        <span class="service-duracion">${s.duracionMin} min</span>
+        <span class="service-precio">${formatPrecio(s.precio)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectService(id, nombre, duracion, precio) {
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`sc-${id}`).classList.add('selected');
+  state.servicio = { id, nombre, duracion, precio };
+  document.getElementById('btn-1').disabled = false;
+}
+
+// ── Calendar ─────────────────────────────────────────────────────
+function renderCalendar() {
+  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('cal-month').textContent = `${months[state.calMonth]} ${state.calYear}`;
+
+  const grid = document.getElementById('calendar-grid');
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+  const first = new Date(state.calYear, state.calMonth, 1);
+  const last = new Date(state.calYear, state.calMonth + 1, 0);
+
+  for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-day empty"></div>`;
+
+  for (let d = 1; d <= last.getDate(); d++) {
+    const date = new Date(state.calYear, state.calMonth, d);
+    const dow = date.getDay();
+    const isPast = date < today;
+    const isSunday = dow === 0;
+    const isDisabled = isPast || isSunday;
+    const isToday = date.getTime() === today.getTime();
+    const dateStr = `${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isSelected = state.fecha === dateStr;
+
+    let cls = 'cal-day';
+    if (isDisabled) cls += ' disabled';
+    if (isToday) cls += ' today';
+    if (isSelected) cls += ' selected';
+
+    const onclick = isDisabled ? '' : `onclick="selectDate('${dateStr}')"`;
+    html += `<div class="${cls}" ${onclick}>${d}</div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function selectDate(dateStr) {
+  state.fecha = dateStr;
+  state.hora = null;
+  state.horaFin = null;
+  document.getElementById('btn-2').disabled = true;
+  renderCalendar();
+  loadSlots(dateStr);
+}
+
+async function loadSlots(fecha) {
+  const section = document.getElementById('slots-section');
+  const container = document.getElementById('slots-container');
+  const label = document.getElementById('slots-date-label');
+
+  section.style.display = 'block';
+  container.innerHTML = '<div class="slots-loading">Cargando horarios...</div>';
+
+  const d = new Date(fecha + 'T12:00:00');
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  label.textContent = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]}`;
+
+  try {
+    const res = await fetch(`${API}/disponibilidad?fecha=${fecha}&servicioId=${state.servicio.id}`);
+    const data = await res.json();
+
+    if (!data.ok || !data.abierto) {
+      container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px">No hay disponibilidad para este día.</p>';
+      return;
+    }
+
+    const slots = data.slots || [];
+    if (!slots.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px">No hay horarios disponibles.</p>';
+      return;
+    }
+
+    container.innerHTML = `<div class="slots-grid">${slots.map(s => `
+      <div class="slot ${s.disponible ? '' : 'unavailable'}" 
+           id="slot-${s.hora.replace(':','')}"
+           ${s.disponible ? `onclick="selectSlot('${s.hora}','${s.horaFin}')"` : ''}>
+        ${s.hora}
+        <div class="slot-end">${s.horaFin}</div>
+      </div>
+    `).join('')}</div>`;
+
+  } catch(e) {
+    container.innerHTML = '<p style="color:var(--error);font-size:13px;text-align:center;padding:20px">Error cargando horarios.</p>';
+  }
+}
+
+function selectSlot(hora, horaFin) {
+  document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+  document.getElementById(`slot-${hora.replace(':','')}`).classList.add('selected');
+  state.hora = hora;
+  state.horaFin = horaFin;
+  document.getElementById('btn-2').disabled = false;
+}
+
+function prevMonth() {
+  if (state.calMonth === 0) { state.calMonth = 11; state.calYear--; }
+  else state.calMonth--;
+  renderCalendar();
+}
+
+function nextMonth() {
+  if (state.calMonth === 11) { state.calMonth = 0; state.calYear++; }
+  else state.calMonth++;
+  renderCalendar();
+}
+
+// ── Steps navigation ──────────────────────────────────────────────
+function goToStep(n) {
+  if (n === 3) {
+    const nombre = document.getElementById('input-nombre').value.trim();
+    // just go, validation on step 4
+  }
+
+  if (n === 4) {
+    const nombre = document.getElementById('input-nombre').value.trim();
+    const telefono = document.getElementById('input-telefono').value.trim();
+    const email = document.getElementById('input-email').value.trim();
+    if (!nombre || !telefono || !email) {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+    state.nombre = nombre;
+    state.telefono = telefono;
+    state.email = email;
+    state.notas = document.getElementById('input-notas').value.trim();
+    fillSummary();
+  }
+
+  // Update step indicators
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.className = 'step';
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById(`line-${i}`);
+    line.className = 'step-line' + (i < n ? ' done' : '');
+  }
+
+  // Show panel
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${n}`).classList.add('active');
+  state.step = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function fillSummary() {
+  const d = new Date(state.fecha + 'T12:00:00');
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  document.getElementById('sum-servicio').textContent = state.servicio.nombre;
+  document.getElementById('sum-fecha').textContent = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]}`;
+  document.getElementById('sum-hora').textContent = `${state.hora} — ${state.horaFin}`;
+  document.getElementById('sum-duracion').textContent = `${state.servicio.duracion} minutos`;
+  document.getElementById('sum-precio').textContent = formatPrecio(state.servicio.precio);
+  document.getElementById('sum-cliente').textContent = state.nombre;
+}
+
+// ── Confirm booking ───────────────────────────────────────────────
+async function confirmarReserva() {
+  const btn = document.getElementById('btn-confirmar');
+  const errEl = document.getElementById('error-msg');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Procesando...';
+
+  try {
+    const res = await fetch(`${API}/reservas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        servicioId: state.servicio.id,
+        fecha: state.fecha,
+        hora: state.hora,
+        cliente: {
+          nombre: state.nombre,
+          telefono: state.telefono,
+          email: state.email,
+          notas: state.notas
+        }
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      showSuccess(data);
+    } else {
+      const msg = data.errores?.[0]?.mensaje || data.error || 'Error al crear la reserva.';
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Confirmar reserva';
+    }
+  } catch(e) {
+    errEl.textContent = 'Error de conexión. Intenta de nuevo.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Confirmar reserva';
+  }
+}
+
+function showSuccess(data) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-5').classList.add('active');
+
+  const d = new Date(state.fecha + 'T12:00:00');
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  document.getElementById('success-summary').innerHTML = `
+    <div class="summary-title">Detalles de tu cita</div>
+    <div class="summary-row"><span class="summary-key">Servicio</span><span class="summary-val">${state.servicio.nombre}</span></div>
+    <div class="summary-row"><span class="summary-key">Fecha</span><span class="summary-val">${d.getDate()} de ${meses[d.getMonth()]}</span></div>
+    <div class="summary-row"><span class="summary-key">Hora</span><span class="summary-val">${state.hora}</span></div>
+    <div class="summary-row"><span class="summary-key">Valor</span><span class="summary-val">${formatPrecio(state.servicio.precio)}</span></div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nuevaReserva() {
+  state = {
+    step: 1, servicio: null, fecha: null, hora: null, horaFin: null,
+    nombre: '', telefono: '', email: '', notas: '',
+    calYear: new Date().getFullYear(), calMonth: new Date().getMonth()
+  };
+  document.getElementById('input-nombre').value = '';
+  document.getElementById('input-telefono').value = '';
+  document.getElementById('input-email').value = '';
+  document.getElementById('input-notas').value = '';
+  document.getElementById('slots-section').style.display = 'none';
+
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.className = 'step' + (i === 1 ? ' active' : '');
+    document.getElementById(`line-${i < 4 ? i : 3}`).className = 'step-line';
+  }
+
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-1').classList.add('active');
+  loadServices();
+  renderCalendar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function formatPrecio(p) {
+  return '$' + p.toLocaleString('es-CO');
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+loadServices();
+renderCalendar();
+</script>
+</body>
+</html>
